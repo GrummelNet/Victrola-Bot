@@ -20,15 +20,16 @@ async def on_ready():
 # you'll have to edit config.ini for these to work properly
 # currently, sheet is unused
 def configure():
+    global token
+    global sheet
     conf = cfp.ConfigParser()
     conf.read("config.ini")
     token = conf['DEFAULT']['token']
     sheet = conf['DEFAULT']['sheet']
-    print(token)
 
 
 def main():
     configure()
-    # client.run(token)
+    client.run(token)
 
 main()
