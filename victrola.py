@@ -8,15 +8,22 @@ import configparser as cfp
 client = discord.Client()
 # global data -- to be loaded in by configure()
 token = None
-guild = None
+guildName = None
 sheet = None
 
 
 @client.event
 async def on_ready():
     print("Bot is ready")
-    # print("started joinVC")
-    # vc = await channel.connect()
+    # finding chosen guild
+    for guild in client.guilds:
+        if guild.name == guildName:
+            break
+
+    # joining the first voice channel
+    channel = guild.voice_channels[0]
+    print("started joining")
+    vc = await channel.connect()
     # vc.play(discord.FFmpegPCMAudio('hodgepodge.mp3'), after=lambda e: print('done', e))
 
 
@@ -25,12 +32,12 @@ async def on_ready():
 # currently, sheet is unused
 def configure():
     global token
-    global guild
+    global guildName
     global sheet
     conf = cfp.ConfigParser()
     conf.read("config.ini")
     token = conf['DEFAULT']['token']
-    guild = conf['DEFAULT']['guild']
+    guildName = conf['DEFAULT']['guild']
     sheet = conf['DEFAULT']['sheet']
 
 
