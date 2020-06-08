@@ -10,10 +10,15 @@ client = discord.Client()
 token = None
 guildName = None
 sheet = None
+# voice globals
+channel = None
+vc = None
 
 
 @client.event
 async def on_ready():
+    global channel
+    global vc
     print("Bot is ready")
     # finding chosen guild
     for guild in client.guilds:
@@ -43,7 +48,12 @@ def configure():
 
 def main():
     configure()
-    client.run(token)
+    try:
+        client.run(token)
+    except KeyboardInterrupt:
+        print("disconnect started")
+        vc.disconnect()
+        exit()
 
 
 main()
