@@ -33,6 +33,8 @@ async def on_ready():
     # source = discord.FFmpegPCMAudio('hodgepodge.mp3'), after=lambda e: print('done', e)
     # playing test song
 
+    songName = "song"
+
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -40,12 +42,10 @@ async def on_ready():
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
+        'outtmpl': songName + '.%(ext)s'
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download(["https://youtu.be/OlhqQfzaQTk"])
-    for file in os.listdir("./"):
-        if file.endswith(".mp3"):
-            os.rename(file, 'song.mp3')
     vc.play(discord.FFmpegPCMAudio("song.mp3"))
     # vc.play(source)
 
