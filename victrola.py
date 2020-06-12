@@ -39,6 +39,7 @@ async def on_ready():
 # downloads a song in the config.ini list
 # called by configure()
 def downloadSong(songName):
+    global songs
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
@@ -49,7 +50,7 @@ def downloadSong(songName):
         'outtmpl': songName + '.%(ext)s'
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([""])
+        ydl.download([songs[songName]])
 
 
 # plays a chosen song
@@ -74,12 +75,13 @@ def configure():
     # creating the song list
     for songStats in conf.sections():
         print(f"Handling section: {songStats}")
+        print(conf[songStats]["link"])
         # adding song to song dictionary
         songs[conf[songStats]["songName"]] = conf[songStats]["link"]
         # if we don't have the song yet, download it
         if not os.path.exists(conf[songStats]["songName"] + ".mp3"):
             print(f'downloading song: {conf[songStats]["songName"]}')
-            downloadSong(conf[songStats]["link"])
+            downloadSong(conf[songStats]["songName"])
 
 
 def main():
