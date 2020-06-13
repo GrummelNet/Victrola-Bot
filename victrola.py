@@ -32,8 +32,7 @@ async def on_ready():
     channel = guild.voice_channels[0] # just picks the first voice channel in the list
     print("started joining")
     vc = await channel.connect()
-    # source = discord.FFmpegPCMAudio('hodgepodge.mp3'), after=lambda e: print('done', e)
-    # playing test song
+    playSong("hodgepodge")
 
 
 # downloads a song in the config.ini list
@@ -55,7 +54,10 @@ def downloadSong(songName):
 
 # plays a chosen song
 def playSong(songName):
-    vc.play(discord.FFmpegPCMAudio(songName + ".mp3"))
+    if vc.is_playing():
+        stop()
+    print(f"Playing song: {songName}")
+    vc.play(discord.FFmpegPCMAudio(songName + ".mp3"), after=playSong(songName))
 
 
 # reads config.ini file and loads in the token for discord and a google sheets document with the music details
@@ -86,13 +88,7 @@ def configure():
 
 def main():
     configure()
-    # handling Ctrl-C to stop the bot -- does not work
-    try:
-        client.run(token)
-    except (KeyboardInterrupt, SystemExit):
-        print("KeyboardInterrupt reached")
-        vc.disconnect()
-        exit()
+    client.run(token)
 
 
 main()
