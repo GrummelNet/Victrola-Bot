@@ -16,7 +16,7 @@ channel = None
 vc = None
 
 songs = dict()
-
+currentSong = ''
 
 @client.event
 async def on_ready():
@@ -32,7 +32,7 @@ async def on_ready():
     channel = guild.voice_channels[0] # just picks the first voice channel in the list
     print("started joining")
     vc = await channel.connect()
-    playSong("hodgepodge")
+    startSong("hodgepodge")
 
 
 # downloads a song in the config.ini list
@@ -52,12 +52,21 @@ def downloadSong(songName):
         ydl.download([songs[songName]])
 
 
-# plays a chosen song
-def playSong(songName):
+# starts a song
+def startSong(songName):
+    global currentSong
     if vc.is_playing():
         stop()
     print(f"Playing song: {songName}")
-    vc.play(discord.FFmpegPCMAudio(songName + ".mp3"), after=playSong(songName))
+    currentSong = songName
+    # looping songs can't be done this way.
+    vc.play(discord.FFmpegPCMAudio(songName + ".mp3"), after=loopSong)
+
+
+def loopSong(error):
+    global currentSong
+    print(f"Looping song: {currentSong}")
+    vc.play(discord.FFmpegPCMAudio(currentSong + ".mp3"), after=loopSong)
 
 
 # reads config.ini file and loads in the token for discord and a google sheets document with the music details
