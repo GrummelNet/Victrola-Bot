@@ -1,3 +1,4 @@
+# this file defines a grid of buttons in a window to control what the bot is playing
 import tkinter as tk
 from functools import partial
 
@@ -12,14 +13,27 @@ def smallestSquare(iCt):
 
 
 # takes in a list of button texts and returns a list of buttons with those texts
+# arranges them in a grid
 def buttonsFromList(textList, m):
+    width = smallestSquare(len(textList))
+
+    r = 0
+    c = 0
     for bText in textList:
         button = tk.Button(
             master = m,
             text = bText,
-            command = partial(buttonTest, bText)
+            command = partial(buttonTest, bText),
+            height = 5,
+            width =  15
         )
-        button.pack()
+        button.grid(row=r, column=c)
+        # button.pack()
+        c += 1
+        if c > width:
+            c = 0
+            r += 1
+    # TODO: add connect + disconnect buttons
 
 
 def buttonTest(label):
@@ -28,18 +42,10 @@ def buttonTest(label):
 
 def main():
     window = tk.Tk()
-    window.title("Greetings Outsider? Care for a song?")
+    window.title("Greetings, traveler! Care for a song?")
 
     listOfSongs = ["button1","button2","button3","button4","button5","button6"]
     buttonsFromList(listOfSongs, window)
-
-    # testB = tk.Button(
-    #     master = window,
-    #     text = "song name",
-    #     command = buttonTest
-    # )
-    # testB.pack()
-
 
     window.mainloop()
 
