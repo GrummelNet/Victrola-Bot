@@ -19,7 +19,6 @@ channel = None
 vc = None
 
 songs = dict()
-songList = []
 currentSong = ''
 
 @client.event
@@ -36,7 +35,6 @@ async def on_ready():
     channel = guild.voice_channels[0] # just picks the first voice channel in the list
     print("started joining")
     vc = await channel.connect()
-    startSong("hodgepodge")
 
 
 # downloads a song in the config.ini list
@@ -73,10 +71,23 @@ def loopSong(error):
     vc.play(discord.FFmpegPCMAudio(currentSong + ".mp3"), after=loopSong)
 
 
+# pauses/unpauses music
+def pauseButton():
+    global vc
+    if vc.is_paused():
+        vc.resume()
+    else:
+        vc.pause()
+
+
 # takes in a list of button texts and returns a list of buttons with those texts
 # arranges them in a grid
 def buttonsFromList(textList, m):
-    width = smallestSquare(len(textList))
+    width = smallestSquare(len(textList) + 1)
+
+    # height/width of all buttons
+    h = 5
+    w = 15
 
     r = 0
     c = 0
@@ -85,8 +96,8 @@ def buttonsFromList(textList, m):
             master = m,
             text = bText,
             command = partial(startSong, bText),
-            height = 5,
-            width =  15
+            height = h,
+            width =  w
         )
         button.grid(row=r, column=c)
         # button.pack()
@@ -94,6 +105,14 @@ def buttonsFromList(textList, m):
         if c > width:
             c = 0
             r += 1
+    pause = tk.Button(
+        master = m,
+        text = "pause",
+        command = pauseButton,
+        height = h,
+        width = w
+    )
+    pause.grid(row=r,column=c)
     # TODO: add connect + disconnect
 
 
@@ -117,7 +136,6 @@ def configure():
         print(conf[songStats]["link"])
         # adding song to song dictionary
         songs[conf[songStats]["songName"]] = conf[songStats]["link"]
-        songList.append(conf[songStats]["songName"])
         # if we don't have the song yet, download it
         if not os.path.exists(conf[songStats]["songName"] + ".mp3"):
             print(f'downloading song: {conf[songStats]["songName"]}')
@@ -128,7 +146,7 @@ def configure():
 # root must be a tkinter window
 def startGui():
     window = makeWindow()
-    buttonsFromList(songList, window)
+    buttonsFromList(songs.keys(), window)
     window.mainloop()
 
 
