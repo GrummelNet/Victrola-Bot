@@ -9,6 +9,7 @@ def smallestSquare(iCt):
     rv = 1
     while iCt > (rv*rv):
         rv += 1
+    print(f"ss: {rv}")
     return rv
 
 

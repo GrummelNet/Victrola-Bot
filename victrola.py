@@ -48,7 +48,7 @@ def downloadSong(songName):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
-        'outtmpl': songName + '.%(ext)s'
+        'outtmpl': 'audio/' + songName + '.%(ext)s'
     }
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([songs[songName]])
@@ -62,13 +62,13 @@ def startSong(songName):
     print(f"Playing song: {songName}")
     currentSong = songName
     # looping songs can't be done this way.
-    vc.play(discord.FFmpegPCMAudio(songName + ".mp3"), after=loopSong)
+    vc.play(discord.FFmpegPCMAudio("audio/" + songName + ".mp3"), after=loopSong)
 
 # is called when the currentSong ends and replays that song
 def loopSong(error):
     global currentSong
     print(f"Looping song: {currentSong}")
-    vc.play(discord.FFmpegPCMAudio(currentSong + ".mp3"), after=loopSong)
+    vc.play(discord.FFmpegPCMAudio("audio/" + currentSong + ".mp3"), after=loopSong)
 
 
 # pauses/unpauses music
@@ -78,6 +78,11 @@ def pauseButton():
         vc.resume()
     else:
         vc.pause()
+
+
+# disconnects from the voice channel -- stub rn
+def disconnectButton():
+    vc.disconnect()
 
 
 # takes in a list of button texts and returns a list of buttons with those texts
@@ -102,7 +107,7 @@ def buttonsFromList(textList, m):
         button.grid(row=r, column=c)
         # button.pack()
         c += 1
-        if c > width:
+        if c >= width:
             c = 0
             r += 1
     pause = tk.Button(
@@ -137,7 +142,7 @@ def configure():
         # adding song to song dictionary
         songs[conf[songStats]["songName"]] = conf[songStats]["link"]
         # if we don't have the song yet, download it
-        if not os.path.exists(conf[songStats]["songName"] + ".mp3"):
+        if not os.path.exists("audio/" + conf[songStats]["songName"] + ".mp3"):
             print(f'downloading song: {conf[songStats]["songName"]}')
             downloadSong(conf[songStats]["songName"])
 

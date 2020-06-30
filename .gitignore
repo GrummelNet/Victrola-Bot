@@ -1,3 +1,4 @@
 config.ini.default
 *.mp3
 *.opus
+audio/*
